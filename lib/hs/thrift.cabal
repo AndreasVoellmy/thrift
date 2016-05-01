@@ -40,7 +40,7 @@ Library
   Hs-Source-Dirs:
     src
   Build-Depends:
-    base >= 4, base < 5, containers, ghc-prim, attoparsec, binary, bytestring >= 0.10, base64-bytestring, hashable, HTTP, text, unordered-containers >= 0.2.6, vector, QuickCheck >= 2.8.2, split
+    base >= 4, base < 5, containers, ghc-prim, attoparsec, binary, bytestring >= 0.10, base64-bytestring, hashable, HTTP, text, unordered-containers >= 0.2, vector, QuickCheck >= 2.8.1, split
   if flag(network-uri)
      build-depends: network-uri >= 2.6, network >= 2.6
   else
@@ -52,6 +52,7 @@ Library
     Thrift.Protocol.Binary,
     Thrift.Protocol.Compact,
     Thrift.Protocol.JSON,
+    Thrift.Protocol.Multiplexed,
     Thrift.Server,
     Thrift.Transport,
     Thrift.Transport.Empty,
@@ -77,4 +78,4 @@ Test-Suite spec
   Hs-Source-Dirs: test
   Ghc-Options: -Wall
   main-is: Spec.hs
-  Build-Depends: base, thrift, hspec, QuickCheck >= 2.8.2, bytestring >= 0.10, unordered-containers >= 0.2.6
+  Build-Depends: base, thrift, hspec, QuickCheck >= 2.8.1, bytestring >= 0.10, unordered-containers >= 0.2.5.1
