@@ -198,14 +198,14 @@ void t_hs_generator::init_generator() {
   // Print header
   f_types_ << hs_language_pragma() << endl;
   f_types_ << hs_autogen_comment() << endl;
-  f_types_ << "module " << pname << "_Types where" << endl;
+  f_types_ << "module Magellan.P4.BMV2." << pname << "_Types where" << endl;
   f_types_ << hs_imports() << endl;
 
   f_consts_ << hs_language_pragma() << endl;
   f_consts_ << hs_autogen_comment() << endl;
-  f_consts_ << "module " << pname << "_Consts where" << endl;
+  f_consts_ << "module Magellan.P4.BMV2." << pname << "_Consts where" << endl;
   f_consts_ << hs_imports() << endl;
-  f_consts_ << "import " << pname << "_Types" << endl;
+  f_consts_ << "import Magellan.P4.BMV2." << pname << "_Types" << endl;
 }
 
 string t_hs_generator::hs_language_pragma() {
@@ -307,7 +307,7 @@ void t_hs_generator::generate_enum(t_enum* tenum) {
   for (c_iter = constants.begin(); c_iter != constants.end(); ++c_iter) {
     string name = capitalize((*c_iter)->get_name());
     f_types_ << (first ? "" : "|");
-    f_types_ << name;
+    f_types_ << capitalize(tenum->get_name()) << "_" << name;
     first = false;
   }
   indent(f_types_) << "deriving (P.Show, P.Eq, G.Generic, TY.Typeable, P.Ord, P.Bounded)" << endl;
@@ -322,7 +322,7 @@ void t_hs_generator::generate_enum(t_enum* tenum) {
   for (c_iter = constants.begin(); c_iter != constants.end(); ++c_iter) {
     int value = (*c_iter)->get_value();
     string name = capitalize((*c_iter)->get_name());
-    indent(f_types_) << name << " -> " << value << endl;
+    indent(f_types_) << capitalize(tenum->get_name()) << "_" << name << " -> " << value << endl;
   }
   indent_down();
   indent(f_types_) << "toEnum t = case t of" << endl;
@@ -330,7 +330,7 @@ void t_hs_generator::generate_enum(t_enum* tenum) {
   for (c_iter = constants.begin(); c_iter != constants.end(); ++c_iter) {
     int value = (*c_iter)->get_value();
     string name = capitalize((*c_iter)->get_name());
-    indent(f_types_) << value << " -> " << name << endl;
+    indent(f_types_) << value << " -> " << capitalize(tenum->get_name()) << "_" << name << endl;
   }
   indent(f_types_) << "_ -> X.throw T.ThriftException" << endl;
   indent_down();
@@ -841,15 +841,15 @@ void t_hs_generator::generate_service(t_service* tservice) {
 
   f_service_ << hs_language_pragma() << endl;
   f_service_ << hs_autogen_comment() << endl;
-  f_service_ << "module " << capitalize(service_name_) << " where" << endl;
+  f_service_ << "module Magellan.P4.BMV2." << capitalize(service_name_) << " where" << endl;
   f_service_ << hs_imports() << endl;
 
   if (tservice->get_extends()) {
     f_service_ << "import qualified " << capitalize(tservice->get_extends()->get_name()) << endl;
   }
 
-  f_service_ << "import " << capitalize(program_name_) << "_Types" << endl;
-  f_service_ << "import qualified " << capitalize(service_name_) << "_Iface as Iface" << endl;
+  f_service_ << "import Magellan.P4.BMV2." << capitalize(program_name_) << "_Types" << endl;
+  f_service_ << "import qualified Magellan.P4.BMV2." << capitalize(service_name_) << "_Iface as Iface" << endl;
 
   // Generate the three main parts of the service
   generate_service_helpers(tservice);
@@ -979,17 +979,17 @@ void t_hs_generator::generate_service_interface(t_service* tservice) {
   f_iface_ << hs_language_pragma() << endl;
   f_iface_ << hs_autogen_comment() << endl;
 
-  f_iface_ << "module " << capitalize(service_name_) << "_Iface where" << endl;
+  f_iface_ << "module Magellan.P4.BMV2." << capitalize(service_name_) << "_Iface where" << endl;
 
   f_iface_ << hs_imports() << endl;
-  f_iface_ << "import " << capitalize(program_name_) << "_Types" << endl;
+  f_iface_ << "import Magellan.P4.BMV2." << capitalize(program_name_) << "_Types" << endl;
   f_iface_ << endl;
 
   string sname = capitalize(service_name_);
   if (tservice->get_extends() != NULL) {
     string extends = type_name(tservice->get_extends());
 
-    indent(f_iface_) << "import " << extends << "_Iface" << endl;
+    indent(f_iface_) << "import Magellan.P4.BMV2." << extends << "_Iface" << endl;
     indent(f_iface_) << "class " << extends << "_Iface a => " << sname << "_Iface a where" << endl;
 
   } else {
@@ -1037,17 +1037,17 @@ void t_hs_generator::generate_service_client(t_service* tservice) {
   }
 
   string sname = capitalize(service_name_);
-  indent(f_client_) << "module " << sname << "_Client(" << exports << ") where" << endl;
+  indent(f_client_) << "module Magellan.P4.BMV2." << sname << "_Client(" << exports << ") where" << endl;
 
   if (tservice->get_extends() != NULL) {
     extends = type_name(tservice->get_extends());
-    indent(f_client_) << "import " << extends << "_Client" << endl;
+    indent(f_client_) << "import Magellan.P4.BMV2." << extends << "_Client" << endl;
   }
 
   indent(f_client_) << "import qualified Data.IORef as R" << endl;
   indent(f_client_) << hs_imports() << endl;
-  indent(f_client_) << "import " << capitalize(program_name_) << "_Types" << endl;
-  indent(f_client_) << "import " << capitalize(service_name_) << endl;
+  indent(f_client_) << "import Magellan.P4.BMV2." << capitalize(program_name_) << "_Types" << endl;
+  indent(f_client_) << "import Magellan.P4.BMV2." << capitalize(service_name_) << endl;
 
   // DATS RITE A GLOBAL VAR
   indent(f_client_) << "seqid = R.newIORef 0" << endl;
